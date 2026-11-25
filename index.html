@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Forno Rush — Artisanal Wood-Fired Trattoria</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231c130f'/%3E%3Ccircle cx='16' cy='16' r='11' fill='%23e2a24a' stroke='%23c9a05b' stroke-width='1.5'/%3E%3Ccircle cx='16' cy='16' r='8.2' fill='%23b82b1e'/%3E%3Ccircle cx='13' cy='13' r='2.1' fill='%23fff2c9'/%3E%3Ccircle cx='19.2' cy='14.5' r='1.9' fill='%23fff2c9'/%3E%3Ccircle cx='15.5' cy='19.5' r='2' fill='%23fff2c9'/%3E%3Ccircle cx='16' cy='15.5' r='1.3' fill='%23338f44'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Fredoka:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <!-- 1. Top Slim Espresso-Walnut HUD Bar -->
+    <header class="top-hud">
+      <div class="hud-brand">
+        <span class="brand-mark" aria-hidden="true">✦</span>
+        <div class="brand-copy">
+          <div class="brand-title">FORNO RUSH</div>
+          <div class="brand-meta">
+            <span id="hud-day-badge" class="brand-day">DAY 1 • OPEN</span>
+            <span class="meta-dot" aria-hidden="true">·</span>
+            <span id="hud-rank-badge" class="brand-rank">★ Corner Slice Counter</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hud-stats">
+        <div class="hud-pill clock-pill" title="Evening Service Clock">
+          <span class="pill-glyph" aria-hidden="true">◷</span>
+          <span id="hud-clock" class="mono-val">01:30</span>
+        </div>
+
+        <div class="hud-pill coin-pill" id="hud-coin-box" title="Trattoria Treasury">
+          <span class="pill-glyph coin-glyph" aria-hidden="true">●</span>
+          <span id="hud-coins" class="mono-val">$0.00</span>
+        </div>
+
+        <div class="hud-pill goal-pill" title="Daily Service Target">
+          <span class="pill-label">TARGET</span>
+          <span id="hud-day-rev" class="mono-val">$0</span>
+          <span class="pill-sep">/</span>
+          <span id="hud-day-goal" class="mono-val muted">$58</span>
+        </div>
+
+        <div class="hud-pill fever-pill" id="hud-fever-pill" title="Serve consecutive Great or Perfect pies to ignite Wood-Fire Fever">
+          <span class="pill-glyph flame-glyph" aria-hidden="true">🔥</span>
+          <div class="fever-meta">
+            <div class="fever-top">
+              <span id="hud-streak-label">STREAK ×0</span>
+              <span id="hud-fever-status">EMBER</span>
+            </div>
+            <div class="fever-track">
+              <div class="fever-fill" id="hud-fever-fill"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hud-actions">
+        <button id="btn-decor" type="button" class="showroom-btn" title="Open Trattoria Customizer & Upgrades">
+          <span class="showroom-icon" aria-hidden="true">✦</span>
+          <span>Showroom</span>
+        </button>
+        <button id="btn-music" type="button" class="icon-btn active" title="Toggle Bistro Music" aria-label="Toggle Music">♫</button>
+        <button id="btn-sfx" type="button" class="icon-btn active" title="Toggle Kitchen Sound Effects" aria-label="Toggle Sound Effects">🔊</button>
+        <button id="btn-help" type="button" class="icon-btn" title="Service Guide & Shortcuts" aria-label="How to Play">?</button>
+        <button id="btn-pause" type="button" class="icon-btn" title="Pause Service [Esc]" aria-label="Pause Service">⏸</button>
+      </div>
+    </header>
+
+    <!-- 2. Live Multi-Room Navigation & Peripheral Monitor Bar -->
+    <nav class="room-nav" aria-label="Trattoria Rooms">
+      <button type="button" class="room-tab active" data-room="dining" title="Dining Room — Greet, Deliver & Bus [F1]">
+        <span class="room-tab-main">
+          <span class="room-dot" aria-hidden="true"></span>
+          <span class="room-name">Dining Room</span>
+          <kbd>F1</kbd>
+        </span>
+        <span id="nav-dining-badge" class="nav-badge">Tables ready</span>
+      </button>
+
+      <button type="button" class="room-tab" data-room="kitchen" title="Cook Line — Makeline & Calacatta Prep Bench [F2]">
+        <span class="room-tab-main">
+          <span class="room-dot" aria-hidden="true"></span>
+          <span class="room-name">Cook Line</span>
+          <kbd>F2</kbd>
+        </span>
+        <span id="nav-kitchen-badge" class="nav-badge">Bench open</span>
+      </button>
+
+      <button type="button" class="room-tab" data-room="oven" title="Wood-Fired Forno & Walnut Cutting Pass [F3]">
+        <span class="room-tab-main">
+          <span class="room-dot" aria-hidden="true"></span>
+          <span class="room-name">Wood-Fired Forno</span>
+          <kbd>F3</kbd>
+        </span>
+        <span class="room-tab-monitors">
+          <span id="nav-oven-bars" class="nav-oven-bars" aria-label="Live Hearth Monitors"></span>
+          <span id="nav-pass-badge" class="nav-badge pass-badge">Pass 0/3</span>
+        </span>
+      </button>
+    </nav>
+
+    <!-- 3. Slim Active Order Ticket Rail -->
+    <section class="ticket-rail" aria-label="Active Seated Orders">
+      <div id="ticket-strip" class="ticket-strip">
+        <div class="ticket-empty">No seated orders yet — welcome guests as they arrive in the Dining Room.</div>
+      </div>
+    </section>
+
+    <!-- 4. Full-Bleed Active Room Stage -->
+    <main class="room-stage">
+      <!-- ROOM 1: DINING ROOM -->
+      <section id="room-dining" class="room-view room-dining active" aria-label="Dining Room">
+        <div class="dining-canvas-wrap">
+          <canvas id="dining-canvas" class="full-canvas"></canvas>
+        </div>
+        <div id="dining-tip-bar" class="dining-tip-bar">
+          Welcome arriving guests at their table for a +$2 hospitality bonus, deliver hot pies from the Serving Pass, and tap finished tables to collect cash.
+        </div>
+      </section>
+
+      <!-- ROOM 2: COOK LINE (MAKELINE + MARBLE BENCH) -->
+      <section id="room-kitchen" class="room-view room-kitchen" aria-label="Cook Line">
+        <div class="makeline-bar" aria-label="Chilled Stainless Makeline">
+          <div class="makeline-rail" id="makeline-rail">
+            <!-- Populated dynamically by src/main.js with .makeline-pan tiles -->
+          </div>
+        </div>
+
+        <div class="prep-bench-wrap">
+          <div class="bench-surface">
+            <div class="bench-header">
+              <div class="bench-title-group">
+                <span class="station-kicker">PREP MARBLE</span>
+                <div id="selected-order-banner" class="selected-order-banner">
+                  No pinned order — select a ticket above or prepare a fresh pie.
+                </div>
+              </div>
+              <button id="btn-trash-prep" type="button" class="subtle-danger-btn" title="Clear current dough from marble">Clear Bench</button>
+            </div>
+
+            <div class="marble-stage">
+              <canvas id="prep-canvas" class="prep-canvas"></canvas>
+              <div class="prep-overlay-bottom">
+                <div id="prep-hint-pill" class="prep-hint-pill">
+                  Drag Dough from the chilled makeline onto the marble — or press Space
+                </div>
+                <button id="btn-send-oven" type="button" class="send-oven-btn" disabled title="Slide pizza into an open hearth [Enter]">
+                  <span>Fire into Forno</span>
+                  <kbd>Enter</kbd>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ROOM 3: WOOD-FIRED FORNO & WALNUT CUTTING PASS -->
+      <section id="room-oven" class="room-view room-oven" aria-label="Wood-Fired Forno and Cutting Pass">
+        <!-- Top: Brick-Dome Forno -->
+        <div class="oven-panel">
+          <div class="station-header">
+            <div class="station-header-left">
+              <span class="station-kicker oven-kicker">WOOD-FIRED FORNO</span>
+              <span id="oven-finish-label" class="station-sub">Classic Firebrick Dome</span>
+            </div>
+            <div class="oven-legend" aria-label="Bake Gauge Zones">
+              <span class="legend-item"><span class="legend-dot golden"></span>Golden</span>
+              <span class="legend-item"><span class="legend-dot crispy"></span>Crispy</span>
+              <span class="legend-item"><span class="legend-dot burn"></span>Burn</span>
+            </div>
+          </div>
+
+          <div class="oven-hearth-grid" id="oven-hearth-grid">
+            <!-- 2 to 4 stone hearths populated dynamically by src/main.js -->
+          </div>
+        </div>
+
+        <!-- Bottom: Walnut Cutting Board & Serving Pass -->
+        <div class="pass-panel">
+          <div class="station-header">
+            <div class="station-header-left">
+              <span class="station-kicker board-kicker">WALNUT CUTTING PASS</span>
+              <span id="board-status-label" class="station-sub">Pull a baked pie from the Forno to slice &amp; plate.</span>
+            </div>
+            <button id="btn-trash-board" type="button" class="subtle-danger-btn" disabled title="Discard pizza on board">Discard</button>
+          </div>
+
+          <div class="board-workspace">
+            <div class="cutting-canvas-wrap">
+              <canvas id="board-canvas" class="board-canvas"></canvas>
+              <div id="board-slice-badge" class="board-slice-badge hidden">0 Slices</div>
+            </div>
+
+            <div class="board-controls">
+              <div class="board-readout" id="board-readout">
+                <div class="readout-empty">Pull a hot pie from the brick oven above, swipe across the walnut peel to slice, then place it on the Serving Pass.</div>
+              </div>
+
+              <div class="board-action-grid">
+                <button id="btn-quick-slice" type="button" class="action-btn slice-btn" disabled title="Slice pizza cleanly [X]">
+                  <span>Slice Cut</span>
+                  <kbd>X</kbd>
+                </button>
+
+                <button id="btn-soda-tap" type="button" class="action-btn soda-btn locked" disabled title="Pair with chilled Sicilian Blood-Orange Soda [S]">
+                  <span id="soda-btn-label">🔒 Aranciata</span>
+                  <kbd>S</kbd>
+                </button>
+              </div>
+
+              <div class="board-serve-row">
+                <button id="btn-send-pass" type="button" class="action-btn pass-btn" disabled title="Place hot pie onto Serving Pass [F]">
+                  <span>Place on Pass</span>
+                  <kbd>F</kbd>
+                </button>
+
+                <button id="btn-send-and-deliver" type="button" class="action-btn deliver-btn" disabled title="Plate on Pass &amp; walk to Dining Room">
+                  <span>Pass &amp; Deliver →</span>
+                </button>
+              </div>
+            </div>
+
+            <aside class="pass-tray-panel" aria-label="Serving Pass Ready Pies">
+              <div class="pass-tray-head">
+                <span class="pass-tray-title">SERVING PASS</span>
+                <span class="pass-tray-cap">Heat Lamps</span>
+              </div>
+              <div id="pass-preview-list" class="pass-preview-list">
+                <div class="pass-empty">No plated pies waiting.</div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Floating Held Ingredient Ghost (Cook Line Drag & Drop) -->
+    <div id="held-cursor" class="held-cursor hidden" aria-hidden="true"></div>
+
+    <!-- Floating FX Layer (Flying Coins & Quiet Toasts) -->
+    <div id="fx-layer" class="fx-layer" aria-hidden="true"></div>
+
+    <!-- TITLE OVERLAY -->
+    <div id="overlay-title" class="modal-overlay visible" role="dialog" aria-modal="true" aria-label="Forno Rush Title">
+      <div class="title-card">
+        <div class="title-crest">NAPOLI · WOOD-FIRED TRATTORIA</div>
+        <h1 class="game-logo">FORNO RUSH</h1>
+        <p class="title-tagline">
+          Welcome evening guests in your candlelit dining room, hand-craft wood-fired Neapolitan pies from a chilled stainless makeline, and curate a Michelin-worthy trattoria.
+        </p>
+
+        <div class="title-pillars">
+          <span>Candlelit Dining Room</span>
+          <span>Tactile Cook Line</span>
+          <span>Live Wood-Fired Forno</span>
+          <span>Trattoria Showroom</span>
+        </div>
+
+        <div id="title-save-banner" class="save-banner hidden"></div>
+
+        <div class="title-buttons">
+          <button id="btn-start-play" type="button" class="hero-btn primary">Open Kitchen — Day 1</button>
+          <button id="btn-reset-save" type="button" class="hero-btn ghost hidden">Start Fresh Save</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAUSE OVERLAY -->
+    <div id="overlay-pause" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Kitchen Paused">
+      <div class="dialog-card compact-card">
+        <div class="dialog-kicker">SERVICE ON HOLD</div>
+        <h2>Kitchen Paused</h2>
+        <p class="dialog-sub">The oak embers and dining room are resting quietly.</p>
+        <div class="dialog-actions">
+          <button id="btn-resume" type="button" class="hero-btn primary">Resume Service</button>
+          <button id="btn-restart-day" type="button" class="hero-btn secondary">Restart Day</button>
+          <button id="btn-to-title" type="button" class="hero-btn ghost">Return to Title</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SERVICE GUIDE / HELP OVERLAY -->
+    <div id="overlay-help" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Running the Trattoria">
+      <div class="dialog-card help-card">
+        <div class="dialog-top">
+          <div>
+            <div class="dialog-kicker">HOUSE SERVICE GUIDE</div>
+            <h2>Running the Trattoria</h2>
+          </div>
+          <button id="btn-close-help" type="button" class="close-x" aria-label="Close">✕</button>
+        </div>
+
+        <div class="help-steps">
+          <div class="help-step">
+            <div class="step-num">1</div>
+            <div>
+              <strong>Dining Room — Greet, Deliver &amp; Bus</strong>
+              <p>Tap newly seated guests while reading the menu for a <strong>+$2 hospitality bonus</strong>. Deliver plated pies from the Serving Pass, then tap finished tables to collect tips and clear plates.</p>
+            </div>
+          </div>
+          <div class="help-step">
+            <div class="step-num">2</div>
+            <div>
+              <strong>Cook Line — Grab &amp; Drag onto Marble</strong>
+              <p>Grab fresh Dough, San Marzano Marinara, Mozzarella, and toppings straight from the chilled stainless pans onto the marble slab — or click a pan to equip and paint freely (<kbd>Space</kbd> dough, <kbd>Enter</kbd> fire).</p>
+            </div>
+          </div>
+          <div class="help-step">
+            <div class="step-num">3</div>
+            <div>
+              <strong>Wood-Fired Forno — Golden, Crispy &amp; Slice</strong>
+              <p>Monitor live mini oven bars from any room. Pull pies (<kbd>Q</kbd>–<kbd>R</kbd> or click) in the <strong>Golden</strong> or <strong>Crispy</strong> zone, swipe-slice across the walnut board (<kbd>X</kbd>), pair Aranciata (<kbd>S</kbd>), and send to the Pass (<kbd>F</kbd>).</p>
+            </div>
+          </div>
+          <div class="help-step">
+            <div class="step-num">4</div>
+            <div>
+              <strong>Trattoria Showroom — Customize Anytime</strong>
+              <p>Switch rooms with <kbd>Tab</kbd> or <kbd>F1</kbd>–<kbd>F3</kbd>. Open the <strong>Showroom</strong> anytime to upgrade flooring, linens, lighting, greenery, oven domes, and kitchen capacity — boosting tips, patience, and Prestige Rank.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="dialog-actions horizontal">
+          <button id="btn-close-help-2" type="button" class="hero-btn primary">Back to Service</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BISTRO LEDGER & TRATTORIA CUSTOMIZER SHOWROOM OVERLAY -->
+    <div id="overlay-day-end" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Trattoria Showroom and Ledger">
+      <div class="dialog-card day-end-card">
+        <div class="day-end-header">
+          <div>
+            <div class="day-end-kicker" id="day-end-kicker">EVENING LEDGER</div>
+            <h2 id="day-end-title">Day 1 Closed</h2>
+          </div>
+          <div class="day-end-header-right">
+            <div class="stars-display" id="day-end-stars"></div>
+            <div class="shop-wallet">
+              <span class="wallet-label">Treasury</span>
+              <strong id="shop-coins" class="mono-val">$0.00</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-stats-grid" id="day-stats-grid"></div>
+
+        <div id="prestige-bar-wrap" class="prestige-bar-wrap"></div>
+
+        <div id="next-unlocks-banner" class="unlocks-banner hidden"></div>
+
+        <div class="showroom-tabs" role="tablist">
+          <button id="tab-decor" type="button" class="showroom-tab active" role="tab" aria-selected="true">
+            Customize Trattoria
+          </button>
+          <button id="tab-upgrades" type="button" class="showroom-tab" role="tab" aria-selected="false">
+            Kitchen &amp; Capacity
+          </button>
+        </div>
+
+        <div class="showroom-body">
+          <div id="panel-decor" class="showroom-panel active" role="tabpanel">
+            <div id="decor-grid" class="decor-grid"></div>
+          </div>
+
+          <div id="panel-upgrades" class="showroom-panel" role="tabpanel">
+            <div id="shop-grid" class="shop-grid"></div>
+          </div>
+        </div>
+
+        <div class="day-end-footer">
+          <button id="btn-replay-day" type="button" class="hero-btn ghost">↻ Replay Day</button>
+          <div class="footer-right-actions">
+            <button id="btn-close-showroom" type="button" class="hero-btn primary hidden">Return to Service</button>
+            <button id="btn-next-day" type="button" class="hero-btn primary">Open Day 2 →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deterministic script load order -->
+  <script src="src/config.js"></script>
+  <script src="src/textures.js"></script>
+  <script src="src/audio.js"></script>
+  <script src="src/state.js"></script>
+  <script src="src/renderers/customerRenderer.js"></script>
+  <script src="src/renderers/pizzaRenderer.js"></script>
+  <script src="src/renderers/diningRenderer.js"></script>
+  <script src="src/main.js"></script>
+</body>
+</html>

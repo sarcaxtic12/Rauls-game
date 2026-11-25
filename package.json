@@ -1,0 +1,9 @@
+{
+  "name": "forno-rush",
+  "version": "1.0.0",
+  "description": "Forno Rush — An addictive wood-fired artisanal pizza restaurant time-management game.",
+  "private": true,
+  "scripts": {
+    "start": "node server.mjs"
+  }
+}
